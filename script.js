@@ -10,9 +10,25 @@ var colors = [
 ]
 
 var squares = document.querySelectorAll('.square');
-var guessIt = colors[3];
-var colorDisplay = document.getElementById('colorDisplay')
+var guessIt = randColor();
+var colorDisplay = document.getElementById('colorDisplay');
+var message  = document.getElementById('feedBack');
+var banner = document.querySelector('h1');
 colorDisplay.textContent = guessIt;
+
+// This function changes the tile colors as well as the banner background into the correct color.
+function correct(color) {
+	for(var i = 0; i < colors.length; i ++) {
+		squares[i].style.backgroundColor = color;
+	}
+	banner.style.backgroundColor = color;
+}
+
+// Random number generator for the color to be guessed
+function randColor() {
+	var randIndex = Math.floor(Math.random() * colors.length);
+	return colors[randIndex];
+}
 
 for (var i = 0; i < squares.length; i ++) {
 	squares[i].style.backgroundColor = colors[i]
@@ -21,11 +37,12 @@ for (var i = 0; i < squares.length; i ++) {
 		// alert('clicked a square!'); //Test
 		var clickedColor = this.style.backgroundColor;
 		if (clickedColor === guessIt) {
-			alert('You are correct');
+			message.textContent = "You're a winner!";
+			correct(clickedColor);
 		}
 		else {
-			alert('You are wrong!')
+			this.style.backgroundColor = '#232323';
+			message.textContent = 'Try Again';
 		}
 	})
 }
-
