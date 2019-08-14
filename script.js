@@ -1,16 +1,28 @@
 // alert('connected!') // Test
 
-var colors = generateRandomColors(6);
+var numSquares = 6;
+var colors = [];
+var guessIt;
 var squares = document.querySelectorAll('.square');
-var guessIt = randColor();
 var colorDisplay = document.getElementById('colorDisplay');
 var message  = document.getElementById('feedBack');
 var banner = document.querySelector('h1');
 var resetButton = document.querySelector("#reset");
-var easy = document.querySelector("#easy")
-var hard = document.querySelector("#hard")
+var mode = document.querySelectorAll(".mode");
 
-colorDisplay.textContent = guessIt;
+init();
+
+function init() {
+	modeSetup();
+	squareSetup();
+	reset();
+}
+
+// Adding an event listener to the button to reset the game.
+resetButton.addEventListener("click",function() {
+	// alert("Resetting Game!"); //Test
+	reset();
+})
 
 // This function changes the tile colors as well as the banner background into the correct color.
 function correct(color) {
@@ -20,7 +32,7 @@ function correct(color) {
 	banner.style.backgroundColor = color;
 }
 
-// Random number generator for the color to be guessed
+// Random index generator for the color to be guessed
 function randColor() {
 	var randIndex = Math.floor(Math.random() * colors.length);
 	return colors[randIndex];
@@ -44,84 +56,10 @@ function generateRandomColors(num) {
 	return arr;
 }
 
-for (var i = 0; i < squares.length; i ++) {
-	squares[i].style.backgroundColor = colors[i]
-
-	squares[i].addEventListener('click',function() {
-		// alert('clicked a square!'); //Test
-		var clickedColor = this.style.backgroundColor;
-
-		// If correct color is clicked
-		if (clickedColor === guessIt) {
-			message.textContent = "YOU'RE A WINNER!";
-			correct(clickedColor);
-			resetButton.textContent = "PLAY AGAIN?" // Gives the user the option to play again.
-		}
-		else {
-			this.style.backgroundColor = '#232323';
-			message.textContent = 'TRY AGAIN';
-		}
-	})
-}
-
-// Adding an event listener to the button to reset the game.
-resetButton.addEventListener("click",function() {
+function reset() {
 	// alert("Resetting Game!"); //Test
 	resetButton.textContent = "NEW COLORS"
-	colors = generateRandomColors(6);
-	guessIt = randColor();
-	colorDisplay.textContent = guessIt;
-	for (var i = 0; i < squares.length; i ++) {
-		squares[i].style.backgroundColor = colors[i]
-	}
-	message.textContent = "";
-	banner.style.backgroundColor = '#232323';
-})
-
-// Adding event listeners to our easy and hard mode buttons:
-easy.addEventListener("click",function() {
-	// alert("Easy Mode"); // 
-	hard.classList.remove("selected");
-	easy.classList.add("selected");
-	colors = generateRandomColors(3);
-	guessIt = randColor();
-	colorDisplay.textContent = guessIt;
-
-	// Applies our logic to only the first 3 squares
-	for (var i = 0; i < squares.length; i ++) {
-		if (colors[i]) {
-			squares[i].style.backgroundColor = colors[i];
-		}
-		else {
-			// This hides the remaining three squares.	
-			squares[i].style.display= "none"
-		}
-		
-	}
-	resetButton.addEventListener("click",function() {
-		// alert("Resetting Game!"); //Test
-		hard.classList.remove("selected");
-		easy.classList.add("selected");
-		resetButton.textContent = "NEW COLORS"
-		colors = generateRandomColors(3);
-		guessIt = randColor();
-		colorDisplay.textContent = guessIt;
-		for (var i = 0; i < squares.length; i ++) {
-			squares[i].style.backgroundColor = colors[i]
-		}
-		message.textContent = "";
-		banner.style.backgroundColor = '#232323';
-		for (var i = 3; i < 6; i ++) {
-		squares[i].style.backgroundColor = "#232323"
-		}
-	})
-})
-
-hard.addEventListener("click",function() {
-	// alert("Hard Mode"); // Test
-	easy.classList.remove("selected");
-	hard.classList.add("selected");
-	colors = generateRandomColors(6);
+	colors = generateRandomColors(numSquares);
 	guessIt = randColor();
 	colorDisplay.textContent = guessIt;
 	for (var i = 0; i < squares.length; i ++) {
@@ -129,19 +67,47 @@ hard.addEventListener("click",function() {
 				squares[i].style.display = "block";
 				squares[i].style.backgroundColor = colors[i];
 			}
-	}
-	resetButton.addEventListener("click",function() {
-		// alert("Resetting Game!"); //Test
-		easy.classList.remove("selected");
-		hard.classList.add("selected");
-		resetButton.textContent = "NEW COLORS"
-		colors = generateRandomColors(6);
-		guessIt = randColor();
-		colorDisplay.textContent = guessIt;
-		for (var i = 0; i < squares.length; i ++) {
-			squares[i].style.backgroundColor = colors[i]
+			else {
+				// This hides the remaining three squares.	
+				squares[i].style.display= "none"
+			}
+			
 		}
-		message.textContent = "";
-		banner.style.backgroundColor = '#232323';
-	})
-})
+	message.textContent = "";
+	banner.style.backgroundColor = '#7a7170';
+}
+
+function squareSetup() {
+	for (var i = 0; i < squares.length; i ++) {
+		squares[i].style.backgroundColor = colors[i]
+
+		squares[i].addEventListener('click',function() {
+			// alert('clicked a square!'); //Test
+			var clickedColor = this.style.backgroundColor;
+
+			// If correct color is clicked
+			if (clickedColor === guessIt) {
+				message.textContent = "YOU'RE A WINNER!";
+				correct(clickedColor);
+				resetButton.textContent = "PLAY AGAIN?" // Gives the user the option to play again.
+			}
+			else {
+				this.style.backgroundColor = '#232323';
+				message.textContent = 'TRY AGAIN';
+			}
+		})
+	}
+}
+
+// Adding event listeners to our easy and hard mode buttons:
+function modeSetup() {
+	for (var i = 0;i < mode.length;i ++) {
+		mode[i].addEventListener("click",function() {
+			mode[0].classList.remove("selected");
+			mode[1].classList.remove("selected");
+			this.classList.add("selected");
+			this.textContent === "EASY" ? numSquares = 3: numSquares = 6;
+			reset();
+		})
+	}
+}
